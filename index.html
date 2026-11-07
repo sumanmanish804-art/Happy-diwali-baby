@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Diwali My Baby Girl Shilu ✨🪔</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Rozha One (Royal Indian Serif), Yatra One, Plus Jakarta Sans, Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            royalNavy: '#070b19',
+            deepMidnight: '#0b112c',
+            goldAmber: '#ffaa00',
+            goldBright: '#ffd700',
+            diyaOrange: '#ff6200',
+            diyaCrimson: '#8a1818',
+            silkMaroon: '#4a0e17'
+          },
+          fontFamily: {
+            royal: ['"Rozha One"', 'serif'],
+            festive: ['"Yatra One"', 'cursive'],
+            ornate: ['"Cinzel Decorative"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Full Page Theme & Background */
+    body {
+      background: radial-gradient(circle at 50% 10%, #151c3d 0%, #0b112c 50%, #050814 100%);
+      color: #f7eed7;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    /* Fireworks Canvas stays full screen & clickable */
+    #fireworksCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* Golden text shimmer animation */
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fff2a3 0%, #ffd700 45%, #ff9800 85%, #fff1a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 35px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Diya Flame Glow & Flicker */
+    @keyframes diyaFlicker {
+      0%, 100% {
+        transform: scale(1) rotate(-1deg);
+        filter: drop-shadow(0 0 10px #ff9800) drop-shadow(0 0 25px #ff5722);
+      }
+      50% {
+        transform: scale(1.08) rotate(2deg) translateY(-2px);
+        filter: drop-shadow(0 0 16px #ffc107) drop-shadow(0 0 32px #ff3d00);
+      }
+    }
+    .flame-active {
+      animation: diyaFlicker 0.28s infinite alternate ease-in-out;
+      transform-origin: bottom center;
+    }
+
+    /* Royal Rangoli Border Pattern */
+    .rangoli-border {
+      background-image: radial-gradient(#d4af37 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Phuljhadi Cursor Sparkles */
+    .sparkle-particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff7bd, #ffb300, #ff4500);
+      box-shadow: 0 0 8px #ffb300, 0 0 16px #ff4500;
+      animation: sparkleFall 0.8s forwards ease-out;
+      z-index: 9999;
+    }
+    @keyframes sparkleFall {
+      0% {
+        transform: translate(0, 0) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0.1);
+        opacity: 0;
+      }
+    }
+
+    /* Hanging Lantern Sway */
+    @keyframes lanternSway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    .sway-slow {
+      animation: lanternSway 3.5s infinite ease-in-out;
+      transform-origin: top center;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen font-sans selection:bg-amber-600 selection:text-white">
+
+  <!-- Background Fireworks Canvas Overlay -->
+  <canvas id="fireworksCanvas"></canvas>
+
+  <!-- Interactive Sparkler (Phuljhadi) Tooltip Reminder -->
+  <div id="sparklerTip" class="fixed bottom-4 left-4 z-40 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-400/30 text-[11px] text-amber-200 flex items-center gap-2 pointer-events-none transition-opacity duration-1000">
+    <span>✨ Screen pe tap ya drag karke phuljhadi chalao!</span>
+  </div>
+
+  <!-- Audio Controls Header -->
+  <header class="fixed top-4 right-4 z-50 flex items-center gap-2">
+    <button id="bgMusicBtn" class="flex items-center gap-2 px-3.5 py-2 text-xs md:text-sm font-medium bg-amber-950/70 backdrop-blur-lg rounded-full border border-amber-400/40 text-amber-200 hover:text-white hover:border-amber-300 shadow-lg shadow-black/40 transition-all duration-300">
+      <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+      <span id="musicBtnLabel">Festive Ambient Sitar 🪕</span>
+    </button>
+  </header>
+
+  <!-- Decorative Hanging Toran & Kandeel (Lanterns) -->
+  <div class="absolute top-0 inset-x-0 flex justify-between px-6 pointer-events-none z-10 opacity-75">
+    <div class="sway-slow flex flex-col items-center">
+      <div class="w-0.5 h-12 bg-amber-500/50"></div>
+      <div class="text-3xl filter drop-shadow-[0_0_12px_#ff9800]">🏮</div>
+    </div>
+    <div class="sway-slow flex flex-col items-center delay-700">
+      <div class="w-0.5 h-16 bg-amber-500/50"></div>
+      <div class="text-4xl filter drop-shadow-[0_0_15px_#ff9800]">🪔</div>
+    </div>
+    <div class="sway-slow flex flex-col items-center delay-300">
+      <div class="w-0.5 h-10 bg-amber-500/50"></div>
+      <div class="text-3xl filter drop-shadow-[0_0_12px_#ff9800]">🏮</div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="relative z-30 max-w-4xl mx-auto px-4 pt-14 pb-28 flex flex-col items-center text-center">
+
+    <!-- Top Badge -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-950/80 to-amber-900/60 border border-amber-400/40 text-amber-300 text-xs md:text-sm font-festive tracking-wide mb-4 shadow-lg shadow-amber-950/50">
+      <span class="animate-pulse">✨</span> For My Sweetheart Shilu <span>✨</span>
+    </div>
+
+    <!-- Festive Header Title -->
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-royal tracking-wide gold-gradient-text leading-tight mb-2">
+      Happy Diwali My Baby Girl ✨
+    </h1>
+    <p class="font-festive text-amber-200 text-lg md:text-2xl mb-2">
+      Bohot sara happy & bohot sara payar mere taraf se Shilu ko ❤️
+    </p>
+    <p class="text-stone-300 max-w-lg text-xs md:text-sm mb-8 font-light leading-relaxed">
+      Happy Diwali darlin! Tum meri zindagi ki sabse pyari roshni ho. Tum hamesha aise hi khush raho aur chamakti raho!
+    </p>
+
+    <!-- SECTION 1: Interactive Diya Lighting Ceremony -->
+    <section class="w-full max-w-xl bg-gradient-to-b from-amber-950/40 to-slate-950/70 p-6 md:p-8 rounded-3xl border border-amber-400/30 backdrop-blur-xl shadow-2xl mb-14 relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-left">
+          <span class="text-[10px] md:text-xs text-amber-400 font-festive uppercase tracking-widest block">Shilu Ke Liye Diye</span>
+          <h2 class="text-lg md:text-xl font-royal text-amber-100">Diyas Jalao (Tap each Diya) 🪔</h2>
+        </div>
+        <button id="lightAllDiyasBtn" class="px-3 py-1.5 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 text-xs transition-colors">
+          Sabhi Diye Ek Sath Jalao ✨
+        </button>
+      </div>
+
+      <p class="text-xs text-stone-400 text-left mb-6">
+        Har diye ko tap karke roshan karo Shilu baby!
+      </p>
+
+      <!-- 5 Interactive Diyas Grid -->
+      <div class="flex items-center justify-around gap-2 py-4 px-2" id="diyasContainer">
+        
+        <!-- Diya 1 -->
+        <div class="diya-unit cursor-pointer flex flex-col items-center group transition-transform active:scale-90" onclick="lightSingleDiya(this)">
+          <div class="flame text-2xl mb-1 opacity-20 filter grayscale transition-all duration-500 select-none">🔥</div>
+          <div class="text-4xl filter drop-shadow-md select-none">🪔</div>
+          <span class="text-[10px] text-amber-300/80 font-festive mt-1">Shilu Ki Smile</span>
+        </div>
+
+        <!-- Diya 2 -->
+        <div class="diya-unit cursor-pointer flex flex-col items-center group transition-transform active:scale-90" onclick="lightSingleDiya(this)">
+          <div class="flame text-2xl mb-1 opacity-20 filter grayscale transition-all duration-500 select-none">🔥</div>
+          <div class="text-4xl filter drop-shadow-md select-none">🪔</div>
+          <span class="text-[10px] text-amber-300/80 font-festive mt-1">Hamara Payaru</span>
+        </div>
+
+        <!-- Diya 3 (Center Crown Diya) -->
+        <div class="diya-unit cursor-pointer flex flex-col items-center group transition-transform active:scale-90" onclick="lightSingleDiya(this)">
+          <div class="flame text-3xl mb-1 opacity-20 filter grayscale transition-all duration-500 select-none">🔥</div>
+          <div class="text-5xl filter drop-shadow-lg select-none">🪔</div>
+          <span class="text-[11px] text-amber-200 font-festive mt-1 font-bold">Tumhari Khushi</span>
+        </div>
+
+        <!-- Diya 4 -->
+        <div class="diya-unit cursor-pointer flex flex-col items-center group transition-transform active:scale-90" onclick="lightSingleDiya(this)">
+          <div class="flame text-2xl mb-1 opacity-20 filter grayscale transition-all duration-500 select-none">🔥</div>
+          <div class="text-4xl filter drop-shadow-md select-none">🪔</div>
+          <span class="text-[10px] text-amber-300/80 font-festive mt-1">Unlimited Jhappi</span>
+        </div>
+
+        <!-- Diya 5 -->
+        <div class="diya-unit cursor-pointer flex flex-col items-center group transition-transform active:scale-90" onclick="lightSingleDiya(this)">
+          <div class="flame text-2xl mb-1 opacity-20 filter grayscale transition-all duration-500 select-none">🔥</div>
+          <div class="text-4xl filter drop-shadow-md select-none">🪔</div>
+          <span class="text-[10px] text-amber-300/80 font-festive mt-1">Forever Together</span>
+        </div>
+
+      </div>
+
+      <!-- Diya Lighting Progress Counter -->
+      <div class="mt-4 pt-3 border-t border-amber-900/40 flex items-center justify-between text-xs text-amber-300/80 font-festive">
+        <span id="diyaCounterText">0 / 5 Diye Prajwalit</span>
+        <span id="diyaBonusMsg" class="text-amber-400 font-semibold hidden animate-bounce">Shilu ke liye sabhi diye jal gaye! 🌟</span>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Launch Fireworks & Laxmi Bomb Buttons -->
+    <section class="w-full max-w-xl mb-14 text-center">
+      <div class="inline-flex items-center gap-2 mb-3">
+        <span class="h-px w-8 bg-amber-500/40"></span>
+        <span class="text-xs uppercase tracking-widest text-amber-400 font-festive">Sound & Visual Spark</span>
+        <span class="h-px w-8 bg-amber-500/40"></span>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <!-- Sky Rocket Burst -->
+        <button onclick="launchBigRocket()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-red-700 via-amber-600 to-amber-500 text-white font-festive text-sm md:text-base shadow-lg shadow-orange-950/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-amber-300/30">
+          <span>🚀</span>
+          <span>Sky Rocket Phodo</span>
+        </button>
+
+        <!-- Anar (Flowerpot Fountain) -->
+        <button onclick="igniteAnarFountain()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-700 via-yellow-600 to-amber-500 text-white font-festive text-sm md:text-base shadow-lg shadow-amber-950/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-amber-300/30">
+          <span>✨</span>
+          <span>Sparks Fountain (Anaar)</span>
+        </button>
+
+        <!-- Ladi / 1000 Wala Patakha -->
+        <button onclick="burstLadiCrackers()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-800 via-red-600 to-rose-700 text-white font-festive text-sm md:text-base shadow-lg shadow-rose-950/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-red-400/30">
+          <span>💥</span>
+          <span>1000 Wala Ladi Burst</span>
+        </button>
+      </div>
+      <p class="text-[11px] text-stone-400 mt-2 font-light">
+        100% Eco-friendly, No Smoke, Real Sound Chimes 🌿
+      </p>
+    </section>
+
+
+    <!-- SECTION 3: Mithai Ka Dabba (Interactive Sweets Box) -->
+    <section class="w-full max-w-2xl bg-gradient-to-b from-amber-950/60 to-black/80 border-2 border-amber-400/40 rounded-3xl p-6 md:p-8 backdrop-blur-md shadow-2xl mb-14 relative">
+      <div class="text-center mb-6">
+        <span class="text-xs text-amber-400 font-festive uppercase tracking-widest">Shilu Ke Liye Meetha</span>
+        <h2 class="text-2xl md:text-3xl font-royal text-amber-100">Shubh Mithai Ka Dabba 🍬</h2>
+        <p class="text-xs text-stone-300 mt-1">Apni favourite mithai pe tap karo baby girl!</p>
+      </div>
+
+      <!-- Mithai Grid: Only Cham Cham, Besan Ka Ladoo, and Rasmalai -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 max-w-lg mx-auto" id="mithaiBox">
+        
+        <!-- Mithai 1: Cham Cham -->
+        <div class="bg-amber-900/30 hover:bg-amber-900/50 border border-amber-400/20 rounded-2xl p-5 flex flex-col items-center cursor-pointer transition-all active:scale-95 group" onclick="eatMithai('Cham Cham', 'Extra meethi aur soft, bilkul Shilu jaisi! 💖', '🌸')">
+          <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🌸</div>
+          <h4 class="font-festive text-amber-200 text-sm md:text-base">Cham Cham</h4>
+          <span class="text-[10px] text-stone-400">Sweet & Soft</span>
+        </div>
+
+        <!-- Mithai 2: Besan Ka Ladoo -->
+        <div class="bg-amber-900/30 hover:bg-amber-900/50 border border-amber-400/20 rounded-2xl p-5 flex flex-col items-center cursor-pointer transition-all active:scale-95 group" onclick="eatMithai('Besan Ka Ladoo', 'Pyaar se bhara hua, ek bite me mood ekdum fresh! 🥰', '🟡')">
+          <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🟡</div>
+          <h4 class="font-festive text-amber-200 text-sm md:text-base">Besan Ka Ladoo</h4>
+          <span class="text-[10px] text-stone-400">Desi Ghee Ka Maza</span>
+        </div>
+
+        <!-- Mithai 3: Rasmalai -->
+        <div class="bg-amber-900/30 hover:bg-amber-900/50 border border-amber-400/20 rounded-2xl p-5 flex flex-col items-center cursor-pointer transition-all active:scale-95 group" onclick="eatMithai('Rasmalai', 'Royal treat meri pyari baby girl ke liye! 🥛✨', '🍧')">
+          <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🍧</div>
+          <h4 class="font-festive text-amber-200 text-sm md:text-base">Rasmalai</h4>
+          <span class="text-[10px] text-stone-400">Kesar & Pista Treat</span>
+        </div>
+
+      </div>
+
+      <!-- Mithai Dynamic Response Banner -->
+      <div id="mithaiResponse" class="mt-4 p-3 bg-amber-500/10 border border-amber-400/30 rounded-xl text-center hidden">
+        <p class="font-festive text-amber-200 text-sm md:text-base" id="mithaiTitle"></p>
+        <p class="text-xs text-stone-300 font-light mt-0.5" id="mithaiDesc"></p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Personalized Royal Greeting Card -->
+    <section class="w-full max-w-2xl bg-gradient-to-b from-[#21090d] via-[#1a070a] to-[#0d0406] border-2 border-amber-500/50 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden mb-14 text-center">
+      <!-- Mandala Background Glow -->
+      <div class="absolute -top-12 -left-12 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Ganesha / Lakshmi Icon Badge -->
+      <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-tr from-amber-600 to-yellow-300 rounded-full flex items-center justify-center text-3xl shadow-lg shadow-amber-500/30 border border-amber-100">
+        🪷
+      </div>
+
+      <span class="text-xs font-festive text-amber-400 tracking-widest uppercase">From My Heart To Yours</span>
+      <h3 class="text-2xl md:text-4xl font-royal text-amber-100 mt-1 mb-4">
+        Happy Diwali Darlin! ❤️
+      </h3>
+
+      <div class="space-y-4 text-stone-300 text-sm md:text-base font-light leading-relaxed max-w-lg mx-auto">
+        <p class="font-festive text-amber-200 text-base md:text-lg">
+          "Bohot sara payar mere taraf se Shilu ko, aur bohot sara happy bhi. Tum meri life ki sabse pyaari roshni ho."
+        </p>
+        <p class="text-xs md:text-sm text-stone-300 border-t border-amber-900/50 pt-4 leading-relaxed">
+          Jab tum hasti ho na toh pura festive season jaisa lagta hai. I love you so much, my baby girl! Tum hamesha aise hi chamakti raho aur muskurati raho.
+        </p>
+      </div>
+
+      <!-- Sign Area -->
+      <div class="mt-8 pt-4 border-t border-amber-500/30 text-center">
+        <p class="text-xs text-amber-400/90 font-festive">
+          Hamesha tumhara: <span class="font-bold text-amber-200 text-sm">Sirf Aur Sirf Manish</span> ❤️
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 5: WhatsApp Share Generator -->
+    <section class="w-full max-w-md bg-white/5 border border-amber-400/20 backdrop-blur-md rounded-2xl p-5 mb-8 text-center">
+      <h4 class="font-festive text-amber-200 text-sm md:text-base mb-1">Shilu Ko WhatsApp Par Bhejo 📲</h4>
+      <p class="text-xs text-stone-400 mb-4">Ye link direct WhatsApp par send karo</p>
+      <button onclick="shareOnWhatsApp()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs md:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/60 transition-transform active:scale-95">
+        <i data-lucide="share-2" class="w-4 h-4"></i>
+        <span>WhatsApp Par Shilu Ko Bhejo</span>
+      </button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-stone-500 text-xs py-6 border-t border-amber-950/60 w-full font-light">
+      Designed with pure love for Shilu • Happy Diwali My Baby Girl ✨
+    </footer>
+
+  </main>
+
+
+  <!-- Toast Notification Box -->
+  <div id="festiveToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-amber-950/95 text-amber-100 border border-amber-400/40 px-5 py-2.5 rounded-full text-xs md:text-sm font-festive shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
+    <span>🪔</span>
+    <span id="toastMessage">Happy Diwali!</span>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // ------------------------------------------------------------------
+    // 1. WEB AUDIO SYNTHESIZER (Crackers, Rockets & Sitar Chimes)
+    // ------------------------------------------------------------------
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let sitarTimer = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Synthesized Firecracker Pop (Laxmi Bomb & Rocket burst)
+    function playCrackerSound(type = 'pop') {
+      try {
+        const ctx = getAudioContext();
+        const bufferSize = ctx.sampleRate * (type === 'rocket' ? 0.6 : 0.25);
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        // Pink/Brownian noise for realistic cracker burst
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5;
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = type === 'rocket' ? 'bandpass' : 'lowpass';
+        filter.frequency.setValueAtTime(type === 'rocket' ? 800 : 350, ctx.currentTime);
+
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0.4, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (type === 'rocket' ? 0.6 : 0.25));
+
+        noise.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        noise.start();
+      } catch (e) {
+        console.warn('Audio not allowed yet:', e);
+      }
+    }
+
+    // Sitar / Tansen Raga ambient pentatonic melody synthesizer
+    const ragaNotes = [220, 246.94, 277.18, 329.63, 369.99, 440, 493.88, 554.37, 659.25]; // Bhupali pentatonic feel
+    function playSitarPluck(freq, delay = 0) {
+      setTimeout(() => {
+        try {
+          const ctx = getAudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+          // Sympathetic resonance filter for Indian string vibe
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1400, ctx.currentTime);
+          filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 1.8);
+
+          gain.gain.setValueAtTime(0.001, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start();
+          osc.stop(ctx.currentTime + 1.9);
+        } catch (err) {}
+      }, delay);
+    }
+
+    // Ambient Music Loop Toggle
+    const bgMusicBtn = document.getElementById('bgMusicBtn');
+    const musicBtnLabel = document.getElementById('musicBtnLabel');
+
+    bgMusicBtn.addEventListener('click', () => {
+      getAudioContext();
+      isMusicPlaying = !isMusicPlaying;
+
+      if (isMusicPlaying) {
+        musicBtnLabel.innerText = "Sitar Melody Playing 🪕";
+        bgMusicBtn.classList.add('border-amber-300', 'bg-amber-900/90', 'text-amber-100');
+        showToast("Raga Bhupali ambient sitar playing ✨");
+
+        sitarTimer = setInterval(() => {
+          if (!isMusicPlaying) return;
+          const note1 = ragaNotes[Math.floor(Math.random() * ragaNotes.length)];
+          playSitarPluck(note1);
+
+          if (Math.random() > 0.4) {
+            const note2 = ragaNotes[Math.floor(Math.random() * ragaNotes.length)];
+            playSitarPluck(note2, 350);
+          }
+        }, 1400);
+      } else {
+        musicBtnLabel.innerText = "Festive Ambient Sitar 🪕";
+        bgMusicBtn.classList.remove('border-amber-300', 'bg-amber-900/90', 'text-amber-100');
+        clearInterval(sitarTimer);
+      }
+    });
+
+    // ------------------------------------------------------------------
+    // 2. CANVAS FIREWORKS & TAP-TO-BURST LOGIC
+    // ------------------------------------------------------------------
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 1.5;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.015;
+        this.gravity = 0.08;
+      }
+
+      update() {
+        this.vx *= 0.98;
+        this.vy *= 0.98;
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= this.decay;
+      }
+
+      draw(c) {
+        c.save();
+        c.globalAlpha = Math.max(0, this.alpha);
+        c.fillStyle = this.color;
+        c.shadowBlur = 8;
+        c.shadowColor = this.color;
+        c.beginPath();
+        c.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      }
+    }
+
+    const festiveColors = ['#ffd700', '#ff6b00', '#ff0033', '#ff00ff', '#00e5ff', '#76ff03', '#ffffff'];
+
+    function createBurst(x, y, count = 40) {
+      playCrackerSound('pop');
+      const chosenColor = festiveColors[Math.floor(Math.random() * festiveColors.length)];
+      for (let i = 0; i < count; i++) {
+        particles.push(new Particle(x, y, Math.random() > 0.3 ? chosenColor : '#ffffff'));
+      }
+    }
+
+    function animateFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw(ctx);
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(animateFireworks);
+    }
+    animateFireworks();
+
+    // Tap anywhere on screen to create a mini firework burst
+    window.addEventListener('click', (e) => {
+      // Avoid bursting when clicking buttons or inputs directly
+      if (['BUTTON', 'INPUT', 'A'].includes(e.target.tagName) || e.target.closest('button')) {
+        return;
+      }
+      createBurst(e.clientX, e.clientY, 32);
+    });
+
+    // ------------------------------------------------------------------
+    // 3. PHULJHADI (SPARKLER) DRAG CURSOR TRAIL
+    // ------------------------------------------------------------------
+    let lastSparkleTime = 0;
+    function spawnPhuljhadiSpark(x, y) {
+      const now = Date.now();
+      if (now - lastSparkleTime < 35) return;
+      lastSparkleTime = now;
+
+      for (let i = 0; i < 3; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'sparkle-particle';
+        const size = Math.random() * 5 + 3;
+        spark.style.width = size + 'px';
+        spark.style.height = size + 'px';
+        spark.style.left = x + 'px';
+        spark.style.top = y + 'px';
+
+        const tx = (Math.random() - 0.5) * 60 + 'px';
+        const ty = (Math.random() * 50 + 20) + 'px';
+        spark.style.setProperty('--tx', tx);
+        spark.style.setProperty('--ty', ty);
+
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 800);
+      }
+    }
+
+    window.addEventListener('mousemove', (e) => spawnPhuljhadiSpark(e.clientX, e.clientY));
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches[0]) spawnPhuljhadiSpark(e.touches[0].clientX, e.touches[0].clientY);
+    });
+
+    // Hide sparkler tooltip after 6 seconds
+    setTimeout(() => {
+      const tip = document.getElementById('sparklerTip');
+      if (tip) tip.style.opacity = '0';
+    }, 6000);
+
+    // ------------------------------------------------------------------
+    // 4. DIYA LIGHTING CEREMONY
+    // ------------------------------------------------------------------
+    let litDiyasCount = 0;
+    const totalDiyas = 5;
+
+    function lightSingleDiya(element) {
+      const flame = element.querySelector('.flame');
+      if (flame.classList.contains('flame-active')) {
+        showToast("Ye diya pehle se roshan hai! 🪔");
+        return;
+      }
+
+      flame.classList.remove('opacity-20', 'grayscale');
+      flame.classList.add('flame-active', 'opacity-100');
+      litDiyasCount++;
+
+      // Trigger sparkles right over the diya
+      const rect = element.getBoundingClientRect();
+      createBurst(rect.left + rect.width / 2, rect.top, 25);
+
+      updateDiyaStatus();
+    }
+
+    function updateDiyaStatus() {
+      document.getElementById('diyaCounterText').innerText = `${litDiyasCount} / ${totalDiyas} Diye Prajwalit`;
+      if (litDiyasCount === totalDiyas) {
+        document.getElementById('diyaBonusMsg').classList.remove('hidden');
+        showToast("Sabhi diye prajwalit ho gaye! Shubh Deepawali! ✨🪔");
+
+        // Celebration confetti burst
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ffd700', '#ff9800', '#ff3d00']
+        });
+      }
+    }
+
+    document.getElementById('lightAllDiyasBtn').addEventListener('click', () => {
+      const diyas = document.querySelectorAll('.diya-unit');
+      diyas.forEach((d, idx) => {
+        setTimeout(() => lightSingleDiya(d), idx * 180);
+      });
+    });
+
+    // ------------------------------------------------------------------
+    // 5. FIREWORK PRESET LAUNCHERS
+    // ------------------------------------------------------------------
+    function launchBigRocket() {
+      playCrackerSound('rocket');
+      const startX = window.innerWidth / 2;
+      const endY = window.innerHeight * 0.28;
+
+      createBurst(startX, endY, 70);
+
+      confetti({
+        particleCount: 90,
+        spread: 80,
+        origin: { x: 0.5, y: 0.35 },
+        colors: ['#ff0055', '#ffd700', '#00e5ff', '#ff6d00']
+      });
+      showToast("🚀 Rocket sky me jaakar blast ho gaya!");
+    }
+
+    function igniteAnarFountain() {
+      playCrackerSound('pop');
+      let sparksLeft = 6;
+      const interval = setInterval(() => {
+        const x = window.innerWidth * 0.5 + (Math.random() - 0.5) * 80;
+        const y = window.innerHeight * 0.7;
+        createBurst(x, y, 20);
+        sparksLeft--;
+        if (sparksLeft <= 0) clearInterval(interval);
+      }, 150);
+      showToast("✨ Anaar ka golden fawwara shuru!");
+    }
+
+    function burstLadiCrackers() {
+      let count = 12;
+      const timer = setInterval(() => {
+        playCrackerSound('pop');
+        const x = window.innerWidth * 0.3 + Math.random() * (window.innerWidth * 0.4);
+        const y = window.innerHeight * 0.6 + (Math.random() - 0.5) * 100;
+        createBurst(x, y, 15);
+        count--;
+        if (count <= 0) clearInterval(timer);
+      }, 100);
+      showToast("💥 1000 ki ladi dhum-dhadake se phoot rahi hai!");
+    }
+
+    // ------------------------------------------------------------------
+    // 6. MITHAI KA DABBA INTERACTION
+    // ------------------------------------------------------------------
+    function eatMithai(name, funnyDescription, emoji) {
+      const banner = document.getElementById('mithaiResponse');
+      const title = document.getElementById('mithaiTitle');
+      const desc = document.getElementById('mithaiDesc');
+
+      banner.classList.remove('hidden');
+      title.innerText = `${emoji} ${name} Khaya Gaya!`;
+      desc.innerText = funnyDescription;
+
+      // Small confetti burst around center
+      confetti({
+        particleCount: 30,
+        spread: 50,
+        origin: { y: 0.7 },
+        colors: ['#ffb703', '#fb8500', '#f72585']
+      });
+
+      showToast(`${name} ka swaad le liya! 😋`);
+    }
+
+    // ------------------------------------------------------------------
+    // 7. SENDER NAME CUSTOMIZER & WHATSAPP SHARING
+    // ------------------------------------------------------------------
+    function updateSenderName() {
+      const input = document.getElementById('customNameInput');
+      const val = input.value.trim();
+      if (!val) {
+        showToast("Kripya apna naam enter karein!");
+        return;
+      }
+
+      document.getElementById('senderNameDisplay').innerText = val;
+      showToast(`Aapka naam card pe update ho gaya: ${val} ✨`);
+    }
+
+    function shareOnWhatsApp() {
+      const currentUrl = window.location.href;
+      const text = `🪔 *Happy Diwali My Baby Girl Shilu!* ✨\n\nBohot sara payar mere taraf se Shilu ko aur bohot sara happy bhi! ❤️\n\nI love you so much darlin! Tumhare liye special Diwali surprise banaya hai, open karo:\n👉 ${currentUrl}`;
+      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+      window.open(waUrl, '_blank');
+    }
+
+    // ------------------------------------------------------------------
+    // 8. TOAST NOTIFICATION HELPER
+    // ------------------------------------------------------------------
+    function showToast(msg) {
+      const toast = document.getElementById('festiveToast');
+      const label = document.getElementById('toastMessage');
+      label.innerText = msg;
+      toast.style.opacity = '1';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
